@@ -1,0 +1,21 @@
+{
+  "name": "shoooter",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^2.9.0"
+  },
+  "dependencies": {
+    "express": "4",
+    "sass": "^1.49.11",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1"
+  }
+}
