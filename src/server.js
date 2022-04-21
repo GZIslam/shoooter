@@ -2,7 +2,7 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { generateWorld } from "./logic/world.js"; 
+import { generateWorld, updateWorld } from "./logic/world.js"; 
 import path from "path";
 import { createPlayer } from "./logic/player.js";
 
@@ -39,9 +39,9 @@ io.on("connection", (socket) => {
             createPlayer(rooms[room], name);
         socket.emit("world", rooms[room])
     });
-    socket.on("action", (room, user, action) => {
-        updateWorld(rooms[room], user, action);
-        socket.emit("world", rooms[room])
+    socket.on("action", (room, username, action, value) => {
+        updateWorld(rooms[room], username, action, value);
+        socket.emit("world", rooms[room]);
     });
 });
 

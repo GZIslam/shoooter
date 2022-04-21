@@ -1,4 +1,4 @@
-export const controller = (player) => {
+export const controller = (world, player, socket) => {
     let isMouseDown = false;
     let shooting;
     let coords = {};
@@ -59,10 +59,16 @@ export const controller = (player) => {
         return (value < minValue ? minValue : value > maxValue ? maxValue : value);
     };
 
+    const room = localStorage.getItem('room');
+
     return {
         animate: () => {
-            player.position.x = trim(position.x + this.speed.x, player.size, world.mapSize.w - player.size);
-            player.position.y = trim(position.y + this.speed.y, player.size, world.mapSize.h - player.size);
+            console.log('animating', player.position.x, player.position.y);
+            player.position.x = trim(player.position.x + player.speed.x, player.size, world.mapSize.w - player.size);
+            player.position.y = trim(player.position.y + player.speed.y, player.size, world.mapSize.h - player.size);
+            if (Math.abs(player.speed.x) + Math.abs(player.speed.y) > 0){
+                socket.emit('action', room, player.name, 'move', player.position);
+            }
         }
     };
 }

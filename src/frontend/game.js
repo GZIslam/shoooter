@@ -1,7 +1,7 @@
 // import { drawHud } from "./components/hud";
 import { io } from "socket.io-client";
 import { controller } from "./controller";
-import { drawArc, drawCircle } from "./drawer";
+import { clearCanvas, drawArc, drawCircle } from "./drawer";
 
 let currentLevel = 1;
 
@@ -23,6 +23,7 @@ const animatePlayer = () => {
 }
 
 const drawWorld = () => {
+    clearCanvas();
     if(world.players) {
         world.players.forEach(player => drawPlayer(player));
     }
@@ -50,7 +51,7 @@ export const game = () => {
     socket.emit("world", localStorage.getItem("room"), username);
     socket.on("world", world_ => {
         world = world_;
-        control = controller(world.players.find(p => p.name == username));
+        control = controller(world, world.players.find(p => p.name == username), socket);
         console.log(world);
     })
     tick();
