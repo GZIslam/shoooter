@@ -1,4 +1,3 @@
-// const { generateLevel } = require("./levels");
 import { generateLevel } from "./levels.js";
 
 export const updateWorld = (room, username, action, value) => {
@@ -18,6 +17,3 @@ export const generateWorld = () => {
     generateLevel(world.level, world);
     return world;
 };
-
-// export default { generateWorld, updateWorld }
-// module.exports = {generateWorld, updateWorld}

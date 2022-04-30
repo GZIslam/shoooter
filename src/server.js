@@ -1,18 +1,21 @@
-// const express = require("express");
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { generateWorld, updateWorld } from "./logic/world.js"; 
 import path from "path";
 import { createPlayer } from "./logic/player.js";
+import { SessionWorker } from "./sessionWorker.js";
+import cors from "cors";
 
 const app = express();
-// const http = require("http");
 const server = http.createServer(app);
-// const { Server } = require("socket.io");
-// const path = require("path");
-// const { generateWorld } = require("./logic/world");
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+const sessionWorkers = {};
 
 const rooms = {
     test: {}
@@ -20,6 +23,7 @@ const rooms = {
 const players = {};
 
 app.use(express.static("public"));
+app.use(cors());
 
 app.get("/", (req, res) => {
     res.sendFile(path.dirname(__dirname) + "/public/index.html");
@@ -33,17 +37,25 @@ io.on("connection", (socket) => {
     socket.on("world", (room, name) => {
         if(!rooms[room].players) {
             rooms[room] = generateWorld();
-            // rooms[room].players.push(createPlayer(rooms[room], name))
+            sessionWorkers[room] = SessionWorker(rooms[room]);
+            sessionWorkers[room].addSession(name, socket);
+            sessionWorkers[room].launch();
         }
-        if(!rooms[room].players.some(i => i.name == name))
+        if(!rooms[room].players.some(i => i.name == name)){
             createPlayer(rooms[room], name);
-        socket.emit("world", rooms[room])
+            sessionWorkers[room].addSession(name, socket);
+        }
+        // socket.emit("world", rooms[room])
     });
     socket.on("action", (room, username, action, value) => {
         updateWorld(rooms[room], username, action, value);
-        socket.emit("world", rooms[room]);
+        // socket.emit("world", rooms[room]);
     });
 });
+
+io.on("disonect", (socket) => {
+    console.log("disconect", socket);
+})
 
 app.get("/rooms", (req, res) => {
     res.json(Object.keys(rooms));
