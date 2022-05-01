@@ -40,7 +40,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile-frontend
-    command: yarn dev
+    command: yarn prod
     volumes:
         - ./src:/app/src
     labels:
